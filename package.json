@@ -1,0 +1,55 @@
+{
+  "name": "nestjs-gql-namespaces",
+  "version": "1.0.0",
+  "description": "Clean, type-safe nested namespace support for NestJS GraphQL with decorator-based API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:clean": "rm -rf dist && npm run build",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "prepublishOnly": "npm run build:clean",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "nestjs",
+    "graphql",
+    "namespace",
+    "decorator",
+    "mutation",
+    "query",
+    "nested",
+    "typescript"
+  ],
+  "author": "Charbel Saliba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charbel-98/nestjs-gql-namespaces.git"
+  },
+  "bugs": {
+    "url": "https://github.com/charbel-98/nestjs-gql-namespaces/issues"
+  },
+  "homepage": "https://github.com/charbel-98/nestjs-gql-namespaces#readme",
+  "peerDependencies": {
+    "@nestjs/common": "^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0",
+    "@nestjs/graphql": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
+    "reflect-metadata": "^0.1.13 || ^0.2.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^9.4.3",
+    "@nestjs/core": "^9.4.3",
+    "@nestjs/graphql": "^10.2.1",
+    "@types/node": "^18.19.0",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.9.0"
+  },
+  "engines": {
+    "node": ">=16.14.0"
+  }
+}

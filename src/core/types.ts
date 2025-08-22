@@ -28,10 +28,16 @@ export interface MethodMetadata {
   readonly options: NamespaceDecoratorOptions;
 }
 
+// Standard GraphQL field options that should be passed through
 export interface NamespaceDecoratorOptions {
   readonly name?: string;
   readonly leafTypeName?: string;
   readonly graphqlKind?: GraphQLKind;
+  readonly deprecationReason?: string;
+  readonly description?: string;
+  readonly complexity?: number;
+  readonly middleware?: any[];
+  readonly nullable?: boolean | 'items' | 'itemsAndList';
 }
 
 export interface NamespaceResolverOptions {

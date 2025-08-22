@@ -6,6 +6,34 @@ import { NamespaceRegistry } from '../core/registry';
 import { createDefaultTypeName, developmentWarn } from '../core/utils';
 
 /**
+ * Creates GraphQL field options from namespace decorator options
+ */
+function createResolveFieldOptions(methodMeta: MethodMetadata): any {
+  const resolveFieldOptions: any = {
+    name: methodMeta.fieldName,
+  };
+
+  // Pass through all GraphQL field options
+  if (methodMeta.options.deprecationReason) {
+    resolveFieldOptions.deprecationReason = methodMeta.options.deprecationReason;
+  }
+  if (methodMeta.options.description) {
+    resolveFieldOptions.description = methodMeta.options.description;
+  }
+  if (methodMeta.options.complexity !== undefined) {
+    resolveFieldOptions.complexity = methodMeta.options.complexity;
+  }
+  if (methodMeta.options.middleware) {
+    resolveFieldOptions.middleware = methodMeta.options.middleware;
+  }
+  if (methodMeta.options.nullable !== undefined) {
+    resolveFieldOptions.nullable = methodMeta.options.nullable;
+  }
+
+  return resolveFieldOptions;
+}
+
+/**
  * Class decorator that creates namespace resolvers for GraphQL mutations and queries.
  * Processes methods decorated with @NestedMutation and @NestedQuery.
  */
@@ -135,7 +163,9 @@ function createSingleResolver(
       enumerable: false,
       configurable: true,
     };
-    ResolveField(finalReturnTypeFn, { name: methodMeta.fieldName })(
+
+    const resolveFieldOptions = createResolveFieldOptions(methodMeta);
+    ResolveField(finalReturnTypeFn, resolveFieldOptions)(
       target.prototype,
       methodMeta.propertyKey,
       descriptor as TypedPropertyDescriptor<any>,
@@ -163,7 +193,8 @@ function createResolverClass(
         return returnType === Promise ? String : (returnType || String);
       });
 
-      ResolveField(finalReturnTypeFn, { name: methodMeta.fieldName })(
+      const resolveFieldOptions = createResolveFieldOptions(methodMeta);
+      ResolveField(finalReturnTypeFn, resolveFieldOptions)(
         ResolverClass.prototype,
         methodMeta.propertyKey,
         descriptor as TypedPropertyDescriptor<any>,

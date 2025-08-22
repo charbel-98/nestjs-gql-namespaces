@@ -129,11 +129,16 @@ function createSingleResolver(
       return returnType === Promise ? String : (returnType || String);
     });
 
-    const descriptor = Object.getOwnPropertyDescriptor(target.prototype, methodMeta.propertyKey) || {};
+    const descriptor = Object.getOwnPropertyDescriptor(target.prototype, methodMeta.propertyKey) || {
+      value: target.prototype[methodMeta.propertyKey],
+      writable: true,
+      enumerable: false,
+      configurable: true,
+    };
     ResolveField(finalReturnTypeFn, { name: methodMeta.fieldName })(
       target.prototype,
       methodMeta.propertyKey,
-      descriptor,
+      descriptor as TypedPropertyDescriptor<any>,
     );
   }
 }
@@ -161,7 +166,7 @@ function createResolverClass(
       ResolveField(finalReturnTypeFn, { name: methodMeta.fieldName })(
         ResolverClass.prototype,
         methodMeta.propertyKey,
-        descriptor,
+        descriptor as TypedPropertyDescriptor<any>,
       );
     }
   }

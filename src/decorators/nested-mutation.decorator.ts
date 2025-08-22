@@ -26,7 +26,7 @@ export function NestedMutation(
     actualOptions = returnTypeFnOrOptions || {};
   }
 
-  return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+  return (target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
     const fieldName = actualOptions.name || (propertyKey as string);
 
     // Store method metadata for later processing in @NamespaceResolver

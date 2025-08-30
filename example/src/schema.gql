@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  bio: String
+}
+
+type AdminResult {
+  success: Boolean!
+  message: String!
+  data: String
+}
+
+type AdminMutations {
+  deleteUser(id: String!): AdminResult!
+}
+
+type AdminQueries {
+  getAllUsers: [User!]!
+}
+
+type AuthResult {
+  token: String!
+  user: User!
+  expiresAt: String!
+}
+
+type AuthMutations {
+  login(credentials: LoginInput!): AuthResult!
+  logout: Boolean!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type AuthQueries {
+  me: User!
+}
+
+type UserMutations {
+  createUser(input: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+  bio: String
+}
+
+type Query {
+  admin: AdminQueries!
+  auth: AuthQueries!
+}
+
+type Mutation {
+  admin: AdminMutations!
+  auth: AuthMutations!
+  user: UserMutations!
+}

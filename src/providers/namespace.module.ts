@@ -10,15 +10,19 @@ export class NamespaceModule {
   /**
    * Creates a dynamic module with all namespace resolvers.
    * Must be called after all @NamespaceResolver decorators have been processed.
+   * @param additionalProviders - Additional providers to include (e.g., services)
    */
-  static forRoot(): DynamicModule {
+  static forRoot(additionalProviders: Provider[] = []): DynamicModule {
     const dynamicProviders = NamespaceRegistry.buildDynamicProviders();
     const dualResolvers = NamespaceRegistry.getDualResolvers();
+    const originalResolvers = NamespaceRegistry.getOriginalResolvers();
     
     // Combine all providers, casting to satisfy TypeScript
     const allProviders: Provider[] = [
+      ...additionalProviders, // User-provided services
       ...dynamicProviders,
       ...(dualResolvers as Provider[]),
+      ...(originalResolvers as Provider[]), // Include original resolvers for DI
     ];
 
     return {

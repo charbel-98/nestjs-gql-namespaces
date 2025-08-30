@@ -106,8 +106,12 @@ export interface INamespaceRegistry {
   hasFieldsForNamespace(graphqlKind: GraphQLKind, namespace: string): boolean;
 
   registerDualResolver(resolver: Function): void;
+  
+  registerOriginalResolver(resolver: Function): void;
 
   getDualResolvers(): readonly Function[];
+  
+  getOriginalResolvers(): readonly Function[];
 
   buildDynamicProviders(): Provider[];
 

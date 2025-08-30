@@ -29,6 +29,7 @@ class NamespaceRegistryImpl implements INamespaceRegistry {
   private readonly segmentToTypeName = new Map<string, string>();
   private readonly leafToParent = new Map<string, string>();
   private readonly dualResolvers: Function[] = [];
+  private readonly originalResolvers: Function[] = [];
 
   setSegmentMapping(
     graphqlKind: GraphQLKind,
@@ -161,9 +162,19 @@ class NamespaceRegistryImpl implements INamespaceRegistry {
   registerDualResolver(resolver: Function): void {
     this.dualResolvers.push(resolver);
   }
+  
+  registerOriginalResolver(resolver: Function): void {
+    if (!this.originalResolvers.includes(resolver)) {
+      this.originalResolvers.push(resolver);
+    }
+  }
 
   getDualResolvers(): readonly Function[] {
     return this.dualResolvers;
+  }
+  
+  getOriginalResolvers(): readonly Function[] {
+    return this.originalResolvers;
   }
 
   getRegistryStats(): RegistryStats {

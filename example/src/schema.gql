@@ -15,11 +15,8 @@ type AdminResult {
   data: String
 }
 
-type AdminMutations {
+type AdminNamespace {
   deleteUser(id: String!): AdminResult!
-}
-
-type AdminQueries {
   getAllUsers: [User!]!
 }
 
@@ -29,9 +26,10 @@ type AuthResult {
   expiresAt: String!
 }
 
-type AuthMutations {
+type AuthNamespace {
   login(credentials: LoginInput!): AuthResult!
   logout: Boolean!
+  me: User!
 }
 
 input LoginInput {
@@ -39,11 +37,7 @@ input LoginInput {
   password: String!
 }
 
-type AuthQueries {
-  me: User!
-}
-
-type UserMutations {
+type UserNamespace {
   createUser(input: CreateUserInput!): User!
 }
 
@@ -54,12 +48,12 @@ input CreateUserInput {
 }
 
 type Query {
-  admin: AdminQueries!
-  auth: AuthQueries!
+  admin: AdminNamespace!
+  auth: AuthNamespace!
 }
 
 type Mutation {
-  admin: AdminMutations!
-  auth: AuthMutations!
-  user: UserMutations!
+  admin: AdminNamespace!
+  auth: AuthNamespace!
+  user: UserNamespace!
 }

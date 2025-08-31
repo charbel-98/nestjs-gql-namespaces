@@ -4,7 +4,16 @@ import { METADATA_KEYS } from '../core/types';
 
 /**
  * Method decorator for GraphQL mutations within a namespace.
- * Must be used on methods within a class decorated with @NamespaceResolver.
+ * Works just like NestJS @Mutation decorator - no configuration needed!
+ * 
+ * @example
+ * ```typescript
+ * @NamespaceResolver({ fieldName: 'auth' })
+ * export class AuthResolver {
+ *   @NestedMutation(() => Boolean)
+ *   async login(): Promise<boolean> { ... }  // Creates: mutation { auth { login } }
+ * }
+ * ```
  */
 export function NestedMutation(): MethodDecorator;
 export function NestedMutation(returnTypeFn: () => any, options?: NamespaceDecoratorOptions): MethodDecorator;
@@ -12,16 +21,14 @@ export function NestedMutation(
   returnTypeFnOrOptions?: (() => any) | NamespaceDecoratorOptions,
   options: NamespaceDecoratorOptions = {},
 ): MethodDecorator {
-  // Parse arguments
+  // Parse arguments (same as NestJS @Mutation)
   let returnTypeFn: (() => any) | undefined;
   let actualOptions: NamespaceDecoratorOptions;
 
   if (typeof returnTypeFnOrOptions === 'function') {
-    // NestedMutation(() => Boolean, options?)
     returnTypeFn = returnTypeFnOrOptions;
     actualOptions = options;
   } else {
-    // NestedMutation() or NestedMutation(options?)
     returnTypeFn = undefined;
     actualOptions = returnTypeFnOrOptions || {};
   }
@@ -29,7 +36,7 @@ export function NestedMutation(
   return (target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
     const fieldName = actualOptions.name || (propertyKey as string);
 
-    // Store method metadata for later processing in @NamespaceResolver
+    // Store method metadata for processing by @NamespaceResolver
     const methodMeta: MethodMetadata = {
       graphqlKind: 'Mutation',
       fieldName,

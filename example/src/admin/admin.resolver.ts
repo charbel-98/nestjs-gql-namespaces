@@ -16,7 +16,7 @@ export class AdminResolver {
     @Args('id') id: string,
     @Context() context: any,
   ): Promise<AdminResult> {
-    const mockUser = context.user || { id: 'admin', email: 'admin@example.com', name: 'Admin User', role: 'admin' };
+    const mockUser = context.user;
     this.logger.log(`Admin action: Deleting user ${id}, requested by context user: ${JSON.stringify(mockUser)}`);
     
     const result = await this.adminService.deleteUser(id, mockUser);

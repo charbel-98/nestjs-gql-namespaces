@@ -28,11 +28,8 @@ export { NamespaceResolver } from './decorators/namespace-resolver.decorator';
 export { NestedMutation } from './decorators/nested-mutation.decorator';
 export { NestedQuery } from './decorators/nested-query.decorator';
 
-// Export the module for NestJS integration (internal use)
+// Export the module for NestJS integration
 export { NamespaceModule } from './providers/namespace.module';
-
-// Utility functions for module registration
-export { registerNamespaceModule } from './core/utils';
 
 // Export public types for TypeScript users
 export type {

@@ -4,7 +4,16 @@ import { METADATA_KEYS } from '../core/types';
 
 /**
  * Method decorator for GraphQL queries within a namespace.
- * Must be used on methods within a class decorated with @NamespaceResolver.
+ * Works just like NestJS @Query decorator - no configuration needed!
+ * 
+ * @example
+ * ```typescript
+ * @NamespaceResolver({ fieldName: 'auth' })
+ * export class AuthResolver {
+ *   @NestedQuery(() => User)
+ *   async me(): Promise<User> { ... }  // Creates: query { auth { me } }
+ * }
+ * ```
  */
 export function NestedQuery(): MethodDecorator;
 export function NestedQuery(returnTypeFn: () => any, options?: NamespaceDecoratorOptions): MethodDecorator;
@@ -12,16 +21,14 @@ export function NestedQuery(
   returnTypeFnOrOptions?: (() => any) | NamespaceDecoratorOptions,
   options: NamespaceDecoratorOptions = {},
 ): MethodDecorator {
-  // Parse arguments
+  // Parse arguments (same as NestJS @Query)
   let returnTypeFn: (() => any) | undefined;
   let actualOptions: NamespaceDecoratorOptions;
 
   if (typeof returnTypeFnOrOptions === 'function') {
-    // NestedQuery(() => Boolean, options?)
     returnTypeFn = returnTypeFnOrOptions;
     actualOptions = options;
   } else {
-    // NestedQuery() or NestedQuery(options?)
     returnTypeFn = undefined;
     actualOptions = returnTypeFnOrOptions || {};
   }
@@ -29,7 +36,7 @@ export function NestedQuery(
   return (target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
     const fieldName = actualOptions.name || (propertyKey as string);
 
-    // Store method metadata for later processing in @NamespaceResolver
+    // Store method metadata for processing by @NamespaceResolver
     const methodMeta: MethodMetadata = {
       graphqlKind: 'Query',
       fieldName,

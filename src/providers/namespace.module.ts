@@ -1,38 +1,38 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { NamespaceRegistry } from '../core/registry';
+import { Module, Global, DynamicModule, OnModuleInit } from '@nestjs/common';
+import { getNamespaceRootResolvers } from '../decorators/namespace-resolver.decorator';
 
 /**
- * Dynamic module that provides namespace resolvers for GraphQL.
- * This module is internal and should not be imported directly by consumers.
+ * Global module that enables namespace resolvers for GraphQL.
+ * Works automatically without any configuration - just import it.
+ * 
+ * @example
+ * ```typescript
+ * @Module({
+ *   imports: [
+ *     GraphQLModule.forRoot({ ... }),
+ *     NamespaceModule, // Just import it, no configuration needed
+ *   ],
+ * })
+ * export class AppModule {}
+ * ```
  */
+@Global()
 @Module({})
-export class NamespaceModule {
-  /**
-   * Creates a dynamic module that automatically discovers providers from namespace resolvers.
-   * Each namespace should have its own module with providers that register themselves.
-   */
-  static forRootAsync(): DynamicModule {
-    const dynamicProviders = NamespaceRegistry.buildDynamicProviders();
-    const dualResolvers = NamespaceRegistry.getDualResolvers();
-    const originalResolvers = NamespaceRegistry.getOriginalResolvers();
+export class NamespaceModule implements OnModuleInit {
+  
+  static forRoot(): DynamicModule {
+    // Get all dynamically created root resolvers
+    const rootResolvers = getNamespaceRootResolvers();
     
-    // Get providers from registered modules
-    const moduleProviders = NamespaceRegistry.getModuleProviders();
-    const allModuleProviders = moduleProviders.flatMap(m => m.providers);
-    
-    // Combine all providers
-    const allProviders: Provider[] = [
-      ...allModuleProviders, // Providers from namespace modules
-      ...dynamicProviders,
-      ...(dualResolvers as Provider[]),
-      ...(originalResolvers as Provider[]),
-    ];
-
     return {
       module: NamespaceModule,
-      providers: allProviders,
-      exports: allProviders,
+      providers: rootResolvers,
+      exports: rootResolvers,
       global: true,
     };
+  }
+  
+  onModuleInit() {
+    // This ensures the module initializes after decorators have run
   }
 }

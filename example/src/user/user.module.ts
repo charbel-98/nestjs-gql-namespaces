@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { registerNamespaceModule } from 'nestjs-gql-namespaces';
 import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
 
@@ -8,8 +7,5 @@ import { UserResolver } from './user.resolver';
   exports: [UserService, UserResolver],
 })
 export class UserModule {
-  // Register this module immediately when the class is loaded
-  static {
-    registerNamespaceModule('user', UserModule, [UserService, UserResolver]);
-  }
+  // No manual registration needed - works automatically!
 }

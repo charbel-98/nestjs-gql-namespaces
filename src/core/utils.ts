@@ -1,6 +1,4 @@
 import type { GraphQLKind } from './types';
-import type { Provider } from '@nestjs/common';
-import { NamespaceRegistry } from './registry';
 
 /**
  * Converts PascalCase or kebab-case to camelCase
@@ -110,14 +108,3 @@ export function developmentWarn(message: string): void {
   }
 }
 
-/**
- * Registers a module with its providers for namespace resolution
- * This should be called by modules that contain namespace resolvers
- */
-export function registerNamespaceModule(
-  namespace: string,
-  moduleClass: Function,
-  providers: Provider[],
-): void {
-  NamespaceRegistry.registerModuleProvider(namespace, moduleClass, providers);
-}

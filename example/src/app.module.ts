@@ -49,12 +49,12 @@ import { UserModule } from './user/user.module';
         };
       },
     }),
-    // Import individual modules first so they can register themselves
+    // Import namespace resolvers first
     UserModule,
     AuthModule,
     AdminModule,
-    // Use forRootAsync to automatically discover providers from registered modules
-    NamespaceModule.forRootAsync(),
+    // Then import NamespaceModule to pick up the root resolvers
+    NamespaceModule.forRoot(),
   ],
 })
 export class AppModule { }

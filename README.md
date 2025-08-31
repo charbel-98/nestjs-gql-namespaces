@@ -154,6 +154,69 @@ export class UserResolver {
 - ✅ Improved TypeScript support
 - ✅ Better error messages and warnings
 
+## Important: Entity Resolvers vs Namespace Resolvers
+
+**Namespace resolvers are only responsible for queries and mutations.** Entity resolve fields (`@ResolveField`, `@ResolveReference`) should remain in a separate entity resolver outside the namespace resolver.
+
+### Correct Pattern: Separate Resolvers
+
+```typescript
+import { Resolver, ResolveField, ResolveReference, Parent } from '@nestjs/graphql';
+import { NamespaceResolver, NestedMutation, NestedQuery } from 'nestjs-gql-namespaces';
+
+// Entity resolver - handles resolve fields, references, and federation concerns
+@Resolver(() => User)
+export class UserResolver {
+  constructor(private readonly userService: UserService) {}
+
+  @ResolveField(() => String)
+  email(@Parent() user: User): string {
+    // Resolve computed or related fields
+    return user.email;
+  }
+
+  @ResolveField(() => Profile, { nullable: true })
+  async profile(@Parent() user: User): Promise<Profile | null> {
+    // Resolve related entities
+    return this.userService.getProfile(user.id);
+  }
+
+  @ResolveReference()
+  async resolveReference(reference: { __typename: string; id: string }): Promise<User> {
+    // Apollo Federation entity resolution
+    return this.userService.findById(reference.id);
+  }
+}
+
+// Namespace resolver - handles only queries and mutations
+@NamespaceResolver({ fieldName: 'user' })
+export class UserNamespaceResolver {
+  constructor(private readonly userService: UserService) {}
+
+  @NestedMutation(() => User)
+  async createUser(@Args('input') input: CreateUserInput): Promise<User> {
+    return this.userService.create(input);
+  }
+
+  @NestedQuery(() => [User])
+  async getAllUsers(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
+  @NestedQuery(() => User)
+  async getUserById(@Args('id') id: string): Promise<User> {
+    return this.userService.findById(id);
+  }
+}
+```
+
+### Why Separate Resolvers?
+
+- **Entity Resolver**: Handles GraphQL entity relationships, field resolution, and Apollo Federation concerns (`@ResolveReference`, `@ResolveField`)
+- **Namespace Resolver**: Provides organized API endpoints through nested mutations and queries (`@NestedMutation`, `@NestedQuery`)
+- **Separation of Concerns**: Each resolver has a distinct responsibility and purpose
+- **Federation Support**: Entity resolvers are essential for Apollo Federation to work properly
+
 ## API Reference
 
 ### `@NamespaceResolver(options)`

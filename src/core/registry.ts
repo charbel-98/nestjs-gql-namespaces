@@ -7,6 +7,7 @@ import type {
   FieldMetadata,
   NamespaceRoot,
   RegistryStats,
+  ModuleMetadata,
 } from './types';
 import {
   normalizeNamespaceName,
@@ -30,6 +31,7 @@ class NamespaceRegistryImpl implements INamespaceRegistry {
   private readonly leafToParent = new Map<string, string>();
   private readonly dualResolvers: Function[] = [];
   private readonly originalResolvers: Function[] = [];
+  private readonly moduleProviders: ModuleMetadata[] = [];
 
   setSegmentMapping(
     graphqlKind: GraphQLKind,
@@ -177,6 +179,21 @@ class NamespaceRegistryImpl implements INamespaceRegistry {
     return this.originalResolvers;
   }
 
+  registerModuleProvider(namespace: string, moduleClass: Function, providers: Provider[]): void {
+    const existingIndex = this.moduleProviders.findIndex(m => m.namespace === namespace);
+    if (existingIndex >= 0) {
+      // Update existing module metadata
+      this.moduleProviders[existingIndex] = { namespace, moduleClass, providers };
+    } else {
+      // Add new module metadata
+      this.moduleProviders.push({ namespace, moduleClass, providers });
+    }
+  }
+
+  getModuleProviders(): ModuleMetadata[] {
+    return [...this.moduleProviders];
+  }
+
   getRegistryStats(): RegistryStats {
     return {
       createdTypes: this.createdTypes.size,
@@ -184,6 +201,7 @@ class NamespaceRegistryImpl implements INamespaceRegistry {
       edges: this.edges.length,
       fields: this.fields.length,
       mappings: this.segmentToTypeName.size,
+      modules: this.moduleProviders.length,
     };
   }
 

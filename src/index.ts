@@ -31,6 +31,9 @@ export { NestedQuery } from './decorators/nested-query.decorator';
 // Export the module for NestJS integration (internal use)
 export { NamespaceModule } from './providers/namespace.module';
 
+// Utility functions for module registration
+export { registerNamespaceModule } from './core/utils';
+
 // Export public types for TypeScript users
 export type {
   NamespaceResolverOptions,

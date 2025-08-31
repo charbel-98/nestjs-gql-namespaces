@@ -4,12 +4,9 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { NamespaceModule } from 'nestjs-gql-namespaces';
 import { join } from 'path';
-import { AdminResolver } from './admin/admin.resolver';
-import { AdminService } from './admin/admin.service';
-import { AuthResolver } from './auth/auth.resolver';
-import { AuthService } from './auth/auth.service';
-import { UserResolver } from './user/user.resolver';
-import { UserService } from './user/user.service';
+import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -52,24 +49,12 @@ import { UserService } from './user/user.service';
         };
       },
     }),
-    NamespaceModule.forRoot([
-      UserService,
-      AuthService,
-      AdminService,
-    ]),
-  ],
-  providers: [
-    UserResolver,
-    AuthResolver,
-    AdminResolver,
-    UserService,
-    AuthService,
-    AdminService,
-  ],
-  exports: [
-    UserService,
-    AuthService,
-    AdminService,
+    // Import individual modules first so they can register themselves
+    UserModule,
+    AuthModule,
+    AdminModule,
+    // Use forRootAsync to automatically discover providers from registered modules
+    NamespaceModule.forRootAsync(),
   ],
 })
 export class AppModule { }

@@ -53,6 +53,13 @@ export interface RegistryStats {
   readonly edges: number;
   readonly fields: number;
   readonly mappings: number;
+  readonly modules: number;
+}
+
+export interface ModuleMetadata {
+  readonly namespace: string;
+  readonly moduleClass: Function;
+  readonly providers: Provider[];
 }
 
 export interface SegmentMapping {
@@ -114,6 +121,10 @@ export interface INamespaceRegistry {
   getOriginalResolvers(): readonly Function[];
 
   buildDynamicProviders(): Provider[];
+
+  registerModuleProvider(namespace: string, moduleClass: Function, providers: Provider[]): void;
+  
+  getModuleProviders(): ModuleMetadata[];
 
   getRegistryStats(): RegistryStats;
 }

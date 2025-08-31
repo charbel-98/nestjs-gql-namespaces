@@ -8,21 +8,24 @@ import { NamespaceRegistry } from '../core/registry';
 @Module({})
 export class NamespaceModule {
   /**
-   * Creates a dynamic module with all namespace resolvers.
-   * Must be called after all @NamespaceResolver decorators have been processed.
-   * @param additionalProviders - Additional providers to include (e.g., services)
+   * Creates a dynamic module that automatically discovers providers from namespace resolvers.
+   * Each namespace should have its own module with providers that register themselves.
    */
-  static forRoot(additionalProviders: Provider[] = []): DynamicModule {
+  static forRootAsync(): DynamicModule {
     const dynamicProviders = NamespaceRegistry.buildDynamicProviders();
     const dualResolvers = NamespaceRegistry.getDualResolvers();
     const originalResolvers = NamespaceRegistry.getOriginalResolvers();
     
-    // Combine all providers, casting to satisfy TypeScript
+    // Get providers from registered modules
+    const moduleProviders = NamespaceRegistry.getModuleProviders();
+    const allModuleProviders = moduleProviders.flatMap(m => m.providers);
+    
+    // Combine all providers
     const allProviders: Provider[] = [
-      ...additionalProviders, // User-provided services
+      ...allModuleProviders, // Providers from namespace modules
       ...dynamicProviders,
       ...(dualResolvers as Provider[]),
-      ...(originalResolvers as Provider[]), // Include original resolvers for DI
+      ...(originalResolvers as Provider[]),
     ];
 
     return {
